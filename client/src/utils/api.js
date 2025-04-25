@@ -4,8 +4,12 @@
  */
 import axios from 'axios';
 
-// Create axios instance with base URL (using proxy set in package.json)
+// Get the backend API URL - use environment variable in production or default to relative path
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
+// Create axios instance with base URL
 const api = axios.create({
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,6 +28,7 @@ export const applicationApi = {
       const response = await api.get('/api/applications');
       return response.data;
     } catch (error) {
+      console.error('Error fetching applications:', error);
       throw error.response ? error.response.data : new Error('Error fetching applications');
     }
   },

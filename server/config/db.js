@@ -11,12 +11,21 @@ const mongoose = require('mongoose');
  */
 const connectDB = async () => {
   try {
-    // If no MONGO_URI is defined in .env, use a default local MongoDB URI
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/fuzzy-lamp';
+    console.log('Attempting to connect to MongoDB...');
     
-    const conn = await mongoose.connect(mongoURI, {
+    // Ensure we have a MONGO_URI
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI is not defined in environment variables');
+    }
+    
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      serverApi: {
+        version: '1',
+        strict: true,
+        deprecationErrors: true,
+      }
     });
     
     console.log(`MongoDB Connected: ${conn.connection.host}`);
