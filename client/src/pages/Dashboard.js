@@ -29,8 +29,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
+        console.log('Dashboard: Fetching applications...');
         setLoading(true);
+        
+        console.log('Dashboard: Making API request...');
         const data = await applicationApi.getAll();
+        console.log('Dashboard: Applications data received:', data);
         
         // Sort by date descending and take latest 3
         const recentApplications = [...data]
@@ -53,8 +57,8 @@ const Dashboard = () => {
         setStats(appStats);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching applications:', error);
-        setError('Failed to load application data. Please try again.');
+        console.error('Dashboard: Error fetching applications:', error);
+        setError(`Failed to load application data: ${error.message}`);
         setLoading(false);
       }
     };
