@@ -34,14 +34,25 @@ function App() {
         const apiUrl = process.env.REACT_APP_API_URL || '';
         console.log('API URL:', apiUrl);
         
+        // First try the simpler test endpoint
+        const testResponse = await fetch(`${apiUrl}/api/test`);
+        
+        if (!testResponse.ok) {
+          throw new Error(`API test endpoint responded with status: ${testResponse.status}`);
+        }
+        
+        const testData = await testResponse.json();
+        console.log('API test successful', testData);
+        
+        // Then try the applications endpoint
         const response = await fetch(`${apiUrl}/api/applications`);
         
         if (!response.ok) {
-          throw new Error(`API responded with status: ${response.status}`);
+          throw new Error(`Applications API responded with status: ${response.status}`);
         }
         
         const data = await response.json();
-        console.log('API connection successful', data);
+        console.log('Applications API connection successful', data);
         setApiStatus({ loading: false, error: null });
       } catch (error) {
         console.error('API connection error:', error);

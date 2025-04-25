@@ -15,13 +15,34 @@ const app = express();
 // Connect to database
 connectDB();
 
-// Middleware
-// Configure CORS to allow requests from any origin
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+// Allow all origins for development, or specific origins for production
+const corsOptions = {
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins - add your frontend URL from Render here
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://fuzzy-lamp.onrender.com',
+      // Add your actual frontend URL below
+      'https://fuzzy-lamp-frontend.onrender.com'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked request from:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-})); 
+};
+
+// Middleware
+app.use(cors(corsOptions)); // Apply CORS configuration
 app.use(express.json()); // Enable parsing JSON request bodies
 
 /**
@@ -31,6 +52,11 @@ app.use(express.json()); // Enable parsing JSON request bodies
  */
 app.get('/', (req, res) => {
   res.send('API is running...');
+});
+
+// Add a test endpoint to check CORS
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working properly!' });
 });
 
 // Define routes
